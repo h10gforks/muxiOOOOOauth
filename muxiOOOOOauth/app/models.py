@@ -13,6 +13,7 @@ from flask_login import UserMixin, AnonymousUserMixin, current_user
 from wtforms.validators import Email
 from itsdangerous import URLSafeSerializer as Serializer
 from rest.auth import AuthUser
+from flask import current_app
 
 # permissions
 class Permission:
@@ -106,13 +107,13 @@ class User(db.Model, UserMixin, AuthUser):
 
     def to_json(self):
         json_user = {
-            id = self.id,
-            username = self.username,
-            email = self.email,
-            sid = self.sid,
-            school = self.school,
-            phone = self.phone,
-            qq = self.qq
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'sid': self.sid,
+            'school': self.school,
+            'phone': self.phone,
+            'qq': self.qq
         }
         return json_user
 
@@ -122,9 +123,9 @@ class User(db.Model, UserMixin, AuthUser):
             username = json_user.get("username"),
             password = json_user.get("password"),
             email = json_user.get("email"),
-            sid = json_user.get("sid", None)
-            school = json_user.get("school", None)
-            phone = json_user.get("phone", None)
+            sid = json_user.get("sid", None),
+            school = json_user.get("school", None),
+            phone = json_user.get("phone", None),
             qq = json_user.get("qq", None)
         )
         db.session.add(user)
@@ -154,7 +155,7 @@ class Client(db.Model):
     __tablename__ = "clients"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(164), unique=True)
-    client_key = db.Column(db.String(15)) # 10
+    desc = db.Column(db.Text)
     # developer id
     dev_id = db.Column(db.ForeignKey("users.id"))
 
@@ -164,7 +165,7 @@ class Client(db.Model):
         to generate client grant token
         """
         s = Serializer(
-            self.client_key
+            current_app.config["SECRET_KEY"]
         )
         return s.dumps({'client_id': self.id})
 
@@ -175,10 +176,10 @@ class Client(db.Model):
         but need client_key
         """
         s = Serializer(
-            self.client_key
+            current_app.config["SECRET_KEY"]
         )
         data = s.loads(token)
-        return Client.query.get_or_404(data['id'])
+        return Client.query.get_or_404(data['client_id'])
 
     def __repr__(self):
         return "<client %r>" % self.name

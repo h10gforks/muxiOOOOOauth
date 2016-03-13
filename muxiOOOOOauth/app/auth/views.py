@@ -7,7 +7,7 @@ from app.models import User
 from .forms import LoginForm
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/login/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -19,8 +19,8 @@ def login():
 
 
 @login_required
-@auth.route('/logout')
+@auth.route('/logout/')
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('main.home'))
 

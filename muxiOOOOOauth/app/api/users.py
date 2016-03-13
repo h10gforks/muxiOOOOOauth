@@ -25,8 +25,8 @@ def get_user(id):
 @grant_required
 def create_user():
     user = User.from_json(request.get_json())
-    return jsonify(
+    return jsonify({
             "created": user.id
-    ), 201
+    }), 201
 
 
