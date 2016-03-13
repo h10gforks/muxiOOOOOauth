@@ -11,6 +11,7 @@ from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from wtforms.validators import Email
+from itsdangerous import URLSafeSerializer as Serializer
 
 # permissions
 class Permission:
@@ -65,13 +66,22 @@ class Role(db.Model):
 
 
 class User(db.Model, UserMixin):
-    """user"""
+    """
+    muxi~auth 用户模块
+    开发者, 注册用户
+    区别仅在于是否注册了应用
+    """
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(164), unique=True, index=True)
     email = db.Column(db.String(164), info={'validator' : Email()})
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(164))
+    sid = db.Column(db.String(20))
+    school = db.Column(db.String(164))
+    phone = db.Column(db.String(20))
+    qq = db.Column(db.String(20))
+    clients = db.relationship('Client', backref="users", lazy='dynamic')
 
     @property
     def password(self):
@@ -105,4 +115,43 @@ class AnonymousUser(AnonymousUserMixin):
 login_manager.anonymous_user = AnonymousUser
 
 # you can writing your models here:
+class Client(db.Model):
+    """
+    muxi~auth 第三方应用模块
+    开发者注册第三方应用
+    client_id, client_key
+    利用id和key生成client_token(grant token)
+    从而获取用户信息
+    """
+    __tablename__ = "clients"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(164), unique=True)
+    client_key = db.Column(db.String(15)) # 10
+    # developer id
+    dev_id = db.Column(db.ForeignKey("users.id"))
+
+    def generate_client_token(self):
+        """
+        use client_id & client_key
+        to generate client grant token
+        """
+        s = Serializer(
+            self.client_key
+        )
+        return s.dumps({'client_id': self.id})
+
+    @staticmethod
+    def verify_client_token(token):
+        """
+        verify client token
+        but need client_key
+        """
+        s = Serializer(
+            self.client_key
+        )
+        data = s.loads(token)
+        return Client.query.get_or_404(data['id'])
+
+    def __repr__(self):
+        return "<client %r>" % self.name
 

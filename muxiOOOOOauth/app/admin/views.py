@@ -39,3 +39,5 @@ admin = Admin(
 from app.models import User
 admin.add_view(ModelView(User, db.session))
 
+from app.models import Client
+admin.add_view(ModelView(Client, db.session))
