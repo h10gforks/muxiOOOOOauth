@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from wtforms.validators import Email
 from itsdangerous import URLSafeSerializer as Serializer
+from rest.auth import AuthUser
 
 # permissions
 class Permission:
@@ -65,7 +66,7 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, AuthUser):
     """
     muxi~auth 用户模块
     开发者, 注册用户
@@ -102,6 +103,33 @@ class User(db.Model, UserMixin):
         if self.role_id == 2:
             return True
         return False
+
+    def to_json(self):
+        json_user = {
+            id = self.id,
+            username = self.username,
+            email = self.email,
+            sid = self.sid,
+            school = self.school,
+            phone = self.phone,
+            qq = self.qq
+        }
+        return json_user
+
+    @staticmethod
+    def from_json(json_user):
+        user = User(
+            username = json_user.get("username"),
+            password = json_user.get("password"),
+            email = json_user.get("email"),
+            sid = json_user.get("sid", None)
+            school = json_user.get("school", None)
+            phone = json_user.get("phone", None)
+            qq = json_user.get("qq", None)
+        )
+        db.session.add(user)
+        db.session.commit()
+        return user
 
     def __repr__(self):
         return "<User %r>" % self.username
