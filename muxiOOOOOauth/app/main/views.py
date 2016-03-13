@@ -1,6 +1,6 @@
 # coding: utf-8
 from . import main
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request
 from app.models import User, Client
 from app import db
 from .forms import RegisterForm, CRegisterForm
@@ -72,11 +72,21 @@ def home():
 @login_required
 def manage(id):
     user = User.query.get_or_404(id)
-    clients = user.clients
+    clients = user.clients.all()
     for client in clients:
         client.client_token = client.generate_client_token()
     return render_template(
         "main/manage.html",
         clients = clients
     )
+
+
+@main.route('/delete/', methods=["GET"])
+@login_required
+def delete():
+    client_id = request.args.get("client")
+    client = Client.query.get_or_404(client_id)
+    db.session.delete(client)
+    db.session.commit()
+    return redirect(url_for("main.manage", id=current_user.id))
 
