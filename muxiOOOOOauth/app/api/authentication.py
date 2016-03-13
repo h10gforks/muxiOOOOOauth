@@ -35,13 +35,12 @@ def before_request():
     pass
 
 
-@api.route('/token/', methods=['POST', 'GET'])
+@api.route('/login/', methods=['POST', 'GET'])
 @auth.login_required
 def get_token():
     if isinstance(g.current_user, AnonymousUser) or g.token_used:
         return unauthorized('Invalid credentials')
     return jsonify({
-        'token': g.current_user.generate_auth_token(3600),
-        'expiration': 3600
+        'uid': g.current_user.id
     })
 
