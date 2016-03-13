@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from wtforms.validators import Email
 from itsdangerous import URLSafeSerializer as Serializer
-from rest.auth import AuthUser
+# from rest.auth import AuthUser
 from flask import current_app
 
 # permissions
@@ -34,6 +34,7 @@ class Role(db.Model):
     2. Moderator: MODERATE_COMMENTS
     3. Administrator: ADMINISTER
     """
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -67,12 +68,13 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-class User(db.Model, UserMixin, AuthUser):
+class User(db.Model, UserMixin):
     """
     muxi~auth 用户模块
     开发者, 注册用户
     区别仅在于是否注册了应用
     """
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(164), unique=True, index=True)
@@ -152,6 +154,7 @@ class Client(db.Model):
     利用id和key生成client_token(grant token)
     从而获取用户信息
     """
+    __table_args__ = {'mysql_charset': 'utf8'}
     __tablename__ = "clients"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(164), unique=True)
