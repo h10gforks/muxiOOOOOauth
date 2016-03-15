@@ -53,7 +53,7 @@ more connection URI format:
 class DevelopmentConfig(Config):
     """development configuration"""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:muxi304@218.199.196.131/authdb"
+    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
 
 """
 testing configuration
