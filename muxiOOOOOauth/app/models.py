@@ -14,6 +14,7 @@ from wtforms.validators import Email
 from itsdangerous import URLSafeSerializer as Serializer
 # from rest.auth import AuthUser
 from flask import current_app
+import base64
 
 # permissions
 class Permission:
@@ -123,8 +124,9 @@ class User(db.Model, UserMixin):
     def from_json(json_user):
         user = User(
             username = json_user.get("username"),
-            password = json_user.get("password"),
+            password = base64.b64decode(json_user.get("password")),
             email = json_user.get("email"),
+            role_id = json_user.get("roleid"),
             sid = json_user.get("sid", None),
             school = json_user.get("school", None),
             phone = json_user.get("phone", None),
