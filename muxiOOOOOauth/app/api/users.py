@@ -28,5 +28,3 @@ def create_user():
     return jsonify({
             "created": user.id
     }), 201
-
-
