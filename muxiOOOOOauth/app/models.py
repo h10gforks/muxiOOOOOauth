@@ -127,7 +127,6 @@ class User(db.Model, UserMixin):
             password = json_user.get("password"),
             role_id = json_user.get("roleid"),
             email = json_user.get("email"),
-            role_id = json_user.get("roleid"),
             sid = json_user.get("sid", None),
             school = json_user.get("school", None),
             phone = json_user.get("phone", None),
