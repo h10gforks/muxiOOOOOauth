@@ -9,6 +9,12 @@ from ..models import User, AnonymousUser
 auth = HTTPBasicAuth()
 
 
+def unauthorized(message):
+    response = jsonify({'error': 'unathorized', 'message': message})
+    response.status_code = 401
+    return response
+
+
 @auth.verify_password
 def verify_password(email_or_token, password):
     if email_or_token == '':
@@ -39,7 +45,7 @@ def before_request():
 @auth.login_required
 def get_token():
     if isinstance(g.current_user, AnonymousUser) or g.token_used:
-        return unauthorized('Invalid credentials')
+	unauthorized('unauthorized!')
     return jsonify({
         'uid': g.current_user.id
     })
