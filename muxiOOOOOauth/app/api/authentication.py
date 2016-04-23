@@ -45,7 +45,7 @@ def before_request():
 @auth.login_required
 def get_token():
     if isinstance(g.current_user, AnonymousUser) or g.token_used:
-	unauthorized('unauthorized!')
+	    unauthorized('unauthorized!')
     return jsonify({
         'uid': g.current_user.id
     })
