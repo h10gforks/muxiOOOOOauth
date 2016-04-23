@@ -7,6 +7,7 @@ from ..models import User, AnonymousUser
 
 
 auth = HTTPBasicAuth()
+# 现在用户的确在数据库里面
 
 
 def unauthorized(message):
@@ -44,8 +45,6 @@ def before_request():
 @api.route('/login/', methods=['POST', 'GET'])
 @auth.login_required
 def get_token():
-    if isinstance(g.current_user, AnonymousUser) or g.token_used:
-	    unauthorized('unauthorized!')
     return jsonify({
         'uid': g.current_user.id
     })
