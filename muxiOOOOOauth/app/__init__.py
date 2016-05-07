@@ -3,9 +3,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from celery import Celery
+from flask.ext.mail import Mail
 # from flask_debugtoolbar import DebugToolbarExtension
 from config import config
-
 
 app = Flask(__name__)
 """
@@ -20,7 +21,11 @@ config_name = 'default'
 app.config.from_object(config[config_name])
 config[config_name].init_app(app)
 # toolbar = DebugToolbarExtension(app)
+mail = Mail(app)
 
+"""celery config"""
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)

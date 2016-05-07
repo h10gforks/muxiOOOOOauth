@@ -10,3 +10,8 @@ class LoginForm(Form):
     password = PasswordField('password', validators=[DataRequired()])
     submit = SubmitField('login!')
 
+
+class LostForm(Form):
+    email = StringField('email', validators=[DataRequired()])
+    newpassword = PasswordField('newpassword', validators=[DataRequired()])
+    submit = SubmitField('submit')

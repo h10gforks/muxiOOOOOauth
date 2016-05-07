@@ -1,0 +1,6 @@
+你好！{{ user.username }},
+
+请点击这个链接确认你对密码的修改
+{{ url_for('auth.confirm', token=token, _external=True) }}
+
+我们是摸摸大的 木犀团队

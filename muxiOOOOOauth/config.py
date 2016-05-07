@@ -32,6 +32,19 @@ class Config:
     SQLALCHEMY_RECORD_QUERIES = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+    """mail configuration"""
+    MAIL_SERVER = 'smtp.163.com'
+    MAIL_PORT = 25
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.getenv('AUTH_MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('AUTH_MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = 'muxistudio@163.com'
+    AUTH_MAIL_SUBJECT_PREFIX = '~[muxistudio]~'
+
+    """celery configuration"""
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
     @staticmethod
     def init_app(app):
         pass
@@ -53,7 +66,7 @@ more connection URI format:
 class DevelopmentConfig(Config):
     """development configuration"""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = os.getenv("AUTH_SQLALCHEMY_DATABASE_URI")
 
 """
 testing configuration

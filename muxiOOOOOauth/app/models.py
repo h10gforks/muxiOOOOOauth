@@ -99,6 +99,21 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def generate_confirm_token(self):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        data = {'confirm': self.id}
+        return s.dumps(data)
+
+    @staticmethod
+    def verify_confirm_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        id = data.get('confirm') # id int
+        return id
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
@@ -188,4 +203,3 @@ class Client(db.Model):
 
     def __repr__(self):
         return "<client %r>" % self.name
-
