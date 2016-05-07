@@ -64,3 +64,4 @@ def confirm(token):
         db.session.commit()
     else:
         return False
+    return "newpassword: %s" % session.get(str(id))

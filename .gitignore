@@ -2,3 +2,4 @@
 **/*.sqlite
 **/*venv/
 **/*migrations/
+**/*.rdb
