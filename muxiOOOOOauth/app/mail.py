@@ -1,5 +1,5 @@
 # coding: utf-8
-from . import mail, app
+from . import mail, app, celery
 from flask import render_template
 from flask.ext.mail import Message
 
@@ -16,4 +16,12 @@ def send_mail(to, subject, template, **kwargs):
     )
     msg.body = render_template(template + '.txt', **kwargs)
     msg.html = render_template(template + '.html', **kwargs)
-    mail.send(msg)
+    send_async_email.delay(msg)
+
+
+# a celery task: send async email
+@celery.task(default_retry_delay=30)
+def send_async_email(msg):
+    with app.app_context():
+        """send async email in application context"""
+        mail.send(msg)
