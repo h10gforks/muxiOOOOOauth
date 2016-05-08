@@ -79,7 +79,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(164), unique=True, index=True)
-    email = db.Column(db.String(164), info={'validator' : Email()})
+    email = db.Column(db.String(164), unique=True, info={'validator' : Email()})
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(164))
     sid = db.Column(db.String(20))
