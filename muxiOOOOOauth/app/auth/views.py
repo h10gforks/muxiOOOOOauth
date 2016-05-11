@@ -65,4 +65,4 @@ def confirm(token):
     else:
         return False
     newpassword = session.get(str(id))
-    return render_template('confirm.html', newpassword=newpassword)
+    return render_template('new.html', newpassword=newpassword)
