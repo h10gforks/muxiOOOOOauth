@@ -88,9 +88,10 @@
 <body>
 	<div class="ui middle aligned center aligned grid">
 		<div class="column">
-			<h2 class="ui teal header">     
+			<h2 class="ui teal image header"> 
+       <img src="/static/themes/default/assets/images/logo.png" alt="muxilogo" class="image">    
 			 <div class="content">
-       			 Find Password
+       			找回密码
      		 </div>
       		</h2>
 			<form method='post' class="ui large form">
@@ -99,16 +100,16 @@
 				        <div class="field">
 				        	<div class="ui left icon input">
 					        	<i class="user icon"></i>
-					        	{{ form.email(placeholder="email...") }}
+					        	{{ form.email(placeholder="请输入邮箱") }}
 					        </div>
 				        </div>
 				        <div class="field">
 				        	<div class="ui left icon input">	
 				        		<i class="lock icon"></i>
-				        		{{ form.newpassword(placeholder="newpassword...") }}
+				        		{{ form.newpassword(placeholder="请输入新密码") }}
 				        	</div>
 						</div>
-				        	{{ form.submit(class="ui fluied large teal submit button") }}
+				        	{{ form.submit(class="ui fluied large teal submit button",value="提交") }}
 				</div>
 				<div class="ui error message"></div>
 		    </form>
