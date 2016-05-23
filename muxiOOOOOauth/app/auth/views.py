@@ -61,10 +61,10 @@ def confirm(token):
     id = User.verify_confirm_token(token)
     user = User.query.get_or_404(id)
     if user:
-        user.password = base64.decode(request.args.get('neo1218'))
+        user.password = base64.b64decode(request.args.get('neo1218'))
         db.session.add(user)
         db.session.commit()
     else:
         return False
-    newpassword = base64.decode(request.args.get('neo1218'))
+    newpassword = base64.b64decode(request.args.get('neo1218'))
     return render_template('auth/success.html', newpassword=newpassword)
