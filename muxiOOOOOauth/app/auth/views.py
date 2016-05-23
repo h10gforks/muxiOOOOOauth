@@ -2,11 +2,12 @@
 
 from app import db
 from . import auth
-from flask import render_template, url_for, redirect, flash, session
+from flask import render_template, url_for, redirect, flash, session, request
 from flask_login import login_user, logout_user, current_user, login_required
 from app.models import User
 from .forms import LoginForm, LostForm
 from app.mail import send_mail
+import base64
 
 
 @auth.route('/login/', methods=['GET', 'POST'])
@@ -40,11 +41,12 @@ def lostfound():
         newpassword = form.newpassword.data
         user = User.query.filter_by(email = email).first()
         if user:
-            session[str(user.id)] = newpassword
+            # session[str(user.id)] = newpassword
             token = user.generate_confirm_token()
             send_mail(
                 email, 'Confirm a New Password', 'auth/confirm',
-                user=user, token=token
+                user=user, token=token,
+                neo1218=base64.b64encode(newpassword)
             )
         else:
             return False
@@ -59,10 +61,10 @@ def confirm(token):
     id = User.verify_confirm_token(token)
     user = User.query.get_or_404(id)
     if user:
-        user.password = session[str(id)]
+        user.password = base64.decode(request.args.get('neo1218'))
         db.session.add(user)
         db.session.commit()
     else:
         return False
-    newpassword = session.get(str(id))
+    newpassword = base64.decode(request.args.get('neo1218'))
     return render_template('auth/success.html', newpassword=newpassword)

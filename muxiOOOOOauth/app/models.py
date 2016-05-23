@@ -101,7 +101,9 @@ class User(db.Model, UserMixin):
 
     def generate_confirm_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
-        data = {'confirm': self.id}
+        data = {
+            'confirm': self.id
+        }
         return s.dumps(data)
 
     @staticmethod
