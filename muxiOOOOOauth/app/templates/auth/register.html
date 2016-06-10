@@ -41,7 +41,7 @@
 		<span class="register">注册</span>
 		<div class="login">已有账户？<a href="login.html">返回登录</a></div>
 	</div>
-        <form action={{ url_for('auth.register') }} method="post">
+        <form action={{ url_for('auth.register') }} id="register_cont" method="post">
 			<div class="must margin_auto">
 				<div class="input_warpper">
 					<input class="input" name="email" v-bind:class="class_obj[0]" v-model="val[0]" v-on:focus="initHint(0)" v-on:blur="checkEmail" type="text" id="email" name="email" placeholder="登录邮箱" />
@@ -52,11 +52,11 @@
 					<div class="hint" v-bind:class="class_obj[1]">${ hint[1] }</div>
 				</div>
 				<div class="input_warpper">
-					<input class="input" name="password" v-bind:class="class_obj[2]" v-on:focus="initHint(2)" v-on:blur="checkPassword" v-model="val[2]" type="text" id="password" name="password" placeholder="设置密码" />
+					<input class="input" name="password" v-bind:class="class_obj[2]" v-on:focus="initHint(2)" v-on:blur="checkPassword" v-model="val[2]" type="password" id="password" name="password" placeholder="设置密码" />
 					<div class="hint" v-bind:class="class_obj[2]">${ hint[2] }</div>
 				</div>
 				<div class="input_warpper">
-					<input class="input" v-bind:class="class_obj[3]" v-on:focus="initHint(3)" v-on:blur="checkRePassword" type="text"  v-model="val[3]" id="repassword" name="ident" placeholder="确认密码" />
+					<input class="input" v-bind:class="class_obj[3]" v-on:focus="initHint(3)" v-on:blur="checkRePassword" type="password"  v-model="val[3]" id="repassword" name="ident" placeholder="确认密码" />
 					<div class="hint" v-bind:class="class_obj[3]">${ hint[3] }</div>
 				</div>
 			</div>

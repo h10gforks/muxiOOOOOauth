@@ -124,7 +124,8 @@
 	    }
 	},
 	onSubmit = function(e){
-	    var bol = true
+	    var bol = true,
+	    form=document.getElementById("register_cont")
 	    e.preventDefault()
 	    this.flag.forEach(function(value){
 	        if(value == false){
@@ -135,7 +136,7 @@
 	        e.preventDefault()
 	        return false
 	    } else {
-	        e.target.submit()
+	        form.submit()
 	        request.post('../mock/user.json',
 	        {
 	            email: this.val[0],

@@ -58,6 +58,7 @@
 	request = __webpack_require__(5)
 	
 	var onSubmit = function(e){
+		document.getElementById('login_cont').submit()
 		request.post('../mock/user.json',
 		{
 		    username: this.username,
