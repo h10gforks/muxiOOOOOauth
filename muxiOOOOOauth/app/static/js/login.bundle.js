@@ -54,8 +54,8 @@
 	//import css
 	__webpack_require__(9)
 	
-	var Vue = __webpack_require__(7),
-	request = __webpack_require__(2)
+	var Vue = __webpack_require__(8),
+	request = __webpack_require__(5)
 	
 	var onSubmit = function(e){
 		request.post('../mock/user.json',
@@ -64,9 +64,10 @@
 		    password: this.password
 		},
 		function(err, res){
-		    if (err) {throw err};
+		    if (err) {throw err}
 		})
 	}
+	Vue.config.delimiters = ['${', '}']
 	new Vue({
 	    el: '#login_content',
 	    data:{
@@ -105,13 +106,311 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
+	/**
+	 * Expose `Emitter`.
+	 */
+	
+	if (true) {
+	  module.exports = Emitter;
+	}
+	
+	/**
+	 * Initialize a new `Emitter`.
+	 *
+	 * @api public
+	 */
+	
+	function Emitter(obj) {
+	  if (obj) return mixin(obj);
+	};
+	
+	/**
+	 * Mixin the emitter properties.
+	 *
+	 * @param {Object} obj
+	 * @return {Object}
+	 * @api private
+	 */
+	
+	function mixin(obj) {
+	  for (var key in Emitter.prototype) {
+	    obj[key] = Emitter.prototype[key];
+	  }
+	  return obj;
+	}
+	
+	/**
+	 * Listen on the given `event` with `fn`.
+	 *
+	 * @param {String} event
+	 * @param {Function} fn
+	 * @return {Emitter}
+	 * @api public
+	 */
+	
+	Emitter.prototype.on =
+	Emitter.prototype.addEventListener = function(event, fn){
+	  this._callbacks = this._callbacks || {};
+	  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
+	    .push(fn);
+	  return this;
+	};
+	
+	/**
+	 * Adds an `event` listener that will be invoked a single
+	 * time then automatically removed.
+	 *
+	 * @param {String} event
+	 * @param {Function} fn
+	 * @return {Emitter}
+	 * @api public
+	 */
+	
+	Emitter.prototype.once = function(event, fn){
+	  function on() {
+	    this.off(event, on);
+	    fn.apply(this, arguments);
+	  }
+	
+	  on.fn = fn;
+	  this.on(event, on);
+	  return this;
+	};
+	
+	/**
+	 * Remove the given callback for `event` or all
+	 * registered callbacks.
+	 *
+	 * @param {String} event
+	 * @param {Function} fn
+	 * @return {Emitter}
+	 * @api public
+	 */
+	
+	Emitter.prototype.off =
+	Emitter.prototype.removeListener =
+	Emitter.prototype.removeAllListeners =
+	Emitter.prototype.removeEventListener = function(event, fn){
+	  this._callbacks = this._callbacks || {};
+	
+	  // all
+	  if (0 == arguments.length) {
+	    this._callbacks = {};
+	    return this;
+	  }
+	
+	  // specific event
+	  var callbacks = this._callbacks['$' + event];
+	  if (!callbacks) return this;
+	
+	  // remove all handlers
+	  if (1 == arguments.length) {
+	    delete this._callbacks['$' + event];
+	    return this;
+	  }
+	
+	  // remove specific handler
+	  var cb;
+	  for (var i = 0; i < callbacks.length; i++) {
+	    cb = callbacks[i];
+	    if (cb === fn || cb.fn === fn) {
+	      callbacks.splice(i, 1);
+	      break;
+	    }
+	  }
+	  return this;
+	};
+	
+	/**
+	 * Emit `event` with the given args.
+	 *
+	 * @param {String} event
+	 * @param {Mixed} ...
+	 * @return {Emitter}
+	 */
+	
+	Emitter.prototype.emit = function(event){
+	  this._callbacks = this._callbacks || {};
+	  var args = [].slice.call(arguments, 1)
+	    , callbacks = this._callbacks['$' + event];
+	
+	  if (callbacks) {
+	    callbacks = callbacks.slice(0);
+	    for (var i = 0, len = callbacks.length; i < len; ++i) {
+	      callbacks[i].apply(this, args);
+	    }
+	  }
+	
+	  return this;
+	};
+	
+	/**
+	 * Return array of callbacks for `event`.
+	 *
+	 * @param {String} event
+	 * @return {Array}
+	 * @api public
+	 */
+	
+	Emitter.prototype.listeners = function(event){
+	  this._callbacks = this._callbacks || {};
+	  return this._callbacks['$' + event] || [];
+	};
+	
+	/**
+	 * Check if this emitter has `event` handlers.
+	 *
+	 * @param {String} event
+	 * @return {Boolean}
+	 * @api public
+	 */
+	
+	Emitter.prototype.hasListeners = function(event){
+	  return !! this.listeners(event).length;
+	};
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+	
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	
+	/**
+	 * Reduce `arr` with `fn`.
+	 *
+	 * @param {Array} arr
+	 * @param {Function} fn
+	 * @param {Mixed} initial
+	 *
+	 * TODO: combatible error handling?
+	 */
+	
+	module.exports = function(arr, fn, initial){  
+	  var idx = 0;
+	  var len = arr.length;
+	  var curr = arguments.length == 3
+	    ? initial
+	    : arr[idx++];
+	
+	  while (idx < len) {
+	    curr = fn.call(null, curr, arr[idx], ++idx, arr);
+	  }
+	  
+	  return curr;
+	};
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/**
 	 * Module dependencies.
 	 */
 	
-	var Emitter = __webpack_require__(5);
-	var reduce = __webpack_require__(6);
-	var requestBase = __webpack_require__(3);
+	var Emitter = __webpack_require__(2);
+	var reduce = __webpack_require__(4);
+	var requestBase = __webpack_require__(6);
 	var isObject = __webpack_require__(1);
 	
 	/**
@@ -137,7 +436,7 @@
 	 * Expose `request`.
 	 */
 	
-	var request = module.exports = __webpack_require__(4).bind(null, Request);
+	var request = module.exports = __webpack_require__(7).bind(null, Request);
 	
 	/**
 	 * Determine XHR.
@@ -1086,7 +1385,7 @@
 
 
 /***/ },
-/* 3 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1438,7 +1737,7 @@
 
 
 /***/ },
-/* 4 */
+/* 7 */
 /***/ function(module, exports) {
 
 	// The node and browser modules expose versions of this with the
@@ -1476,205 +1775,7 @@
 
 
 /***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	/**
-	 * Expose `Emitter`.
-	 */
-	
-	if (true) {
-	  module.exports = Emitter;
-	}
-	
-	/**
-	 * Initialize a new `Emitter`.
-	 *
-	 * @api public
-	 */
-	
-	function Emitter(obj) {
-	  if (obj) return mixin(obj);
-	};
-	
-	/**
-	 * Mixin the emitter properties.
-	 *
-	 * @param {Object} obj
-	 * @return {Object}
-	 * @api private
-	 */
-	
-	function mixin(obj) {
-	  for (var key in Emitter.prototype) {
-	    obj[key] = Emitter.prototype[key];
-	  }
-	  return obj;
-	}
-	
-	/**
-	 * Listen on the given `event` with `fn`.
-	 *
-	 * @param {String} event
-	 * @param {Function} fn
-	 * @return {Emitter}
-	 * @api public
-	 */
-	
-	Emitter.prototype.on =
-	Emitter.prototype.addEventListener = function(event, fn){
-	  this._callbacks = this._callbacks || {};
-	  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
-	    .push(fn);
-	  return this;
-	};
-	
-	/**
-	 * Adds an `event` listener that will be invoked a single
-	 * time then automatically removed.
-	 *
-	 * @param {String} event
-	 * @param {Function} fn
-	 * @return {Emitter}
-	 * @api public
-	 */
-	
-	Emitter.prototype.once = function(event, fn){
-	  function on() {
-	    this.off(event, on);
-	    fn.apply(this, arguments);
-	  }
-	
-	  on.fn = fn;
-	  this.on(event, on);
-	  return this;
-	};
-	
-	/**
-	 * Remove the given callback for `event` or all
-	 * registered callbacks.
-	 *
-	 * @param {String} event
-	 * @param {Function} fn
-	 * @return {Emitter}
-	 * @api public
-	 */
-	
-	Emitter.prototype.off =
-	Emitter.prototype.removeListener =
-	Emitter.prototype.removeAllListeners =
-	Emitter.prototype.removeEventListener = function(event, fn){
-	  this._callbacks = this._callbacks || {};
-	
-	  // all
-	  if (0 == arguments.length) {
-	    this._callbacks = {};
-	    return this;
-	  }
-	
-	  // specific event
-	  var callbacks = this._callbacks['$' + event];
-	  if (!callbacks) return this;
-	
-	  // remove all handlers
-	  if (1 == arguments.length) {
-	    delete this._callbacks['$' + event];
-	    return this;
-	  }
-	
-	  // remove specific handler
-	  var cb;
-	  for (var i = 0; i < callbacks.length; i++) {
-	    cb = callbacks[i];
-	    if (cb === fn || cb.fn === fn) {
-	      callbacks.splice(i, 1);
-	      break;
-	    }
-	  }
-	  return this;
-	};
-	
-	/**
-	 * Emit `event` with the given args.
-	 *
-	 * @param {String} event
-	 * @param {Mixed} ...
-	 * @return {Emitter}
-	 */
-	
-	Emitter.prototype.emit = function(event){
-	  this._callbacks = this._callbacks || {};
-	  var args = [].slice.call(arguments, 1)
-	    , callbacks = this._callbacks['$' + event];
-	
-	  if (callbacks) {
-	    callbacks = callbacks.slice(0);
-	    for (var i = 0, len = callbacks.length; i < len; ++i) {
-	      callbacks[i].apply(this, args);
-	    }
-	  }
-	
-	  return this;
-	};
-	
-	/**
-	 * Return array of callbacks for `event`.
-	 *
-	 * @param {String} event
-	 * @return {Array}
-	 * @api public
-	 */
-	
-	Emitter.prototype.listeners = function(event){
-	  this._callbacks = this._callbacks || {};
-	  return this._callbacks['$' + event] || [];
-	};
-	
-	/**
-	 * Check if this emitter has `event` handlers.
-	 *
-	 * @param {String} event
-	 * @return {Boolean}
-	 * @api public
-	 */
-	
-	Emitter.prototype.hasListeners = function(event){
-	  return !! this.listeners(event).length;
-	};
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	
-	/**
-	 * Reduce `arr` with `fn`.
-	 *
-	 * @param {Array} arr
-	 * @param {Function} fn
-	 * @param {Mixed} initial
-	 *
-	 * TODO: combatible error handling?
-	 */
-	
-	module.exports = function(arr, fn, initial){  
-	  var idx = 0;
-	  var len = arr.length;
-	  var curr = arguments.length == 3
-	    ? initial
-	    : arr[idx++];
-	
-	  while (idx < len) {
-	    curr = fn.call(null, curr, arr[idx], ++idx, arr);
-	  }
-	  
-	  return curr;
-	};
-
-/***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {/*!
@@ -11707,107 +11808,7 @@
 	}, 0);
 	
 	module.exports = Vue;
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(8)))
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-	
-	var process = module.exports = {};
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-	
-	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-	
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = setTimeout(cleanUpNextTick);
-	    draining = true;
-	
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    clearTimeout(timeout);
-	}
-	
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
-	    }
-	};
-	
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-	
-	function noop() {}
-	
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-	
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(3)))
 
 /***/ },
 /* 9 */
