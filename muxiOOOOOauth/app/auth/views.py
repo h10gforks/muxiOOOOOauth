@@ -10,22 +10,40 @@ from app.mail import send_mail
 import base64
 
 
-@auth.route('/login/', methods=['GET', 'POST'])
+@auth.route('/login/', methods=['POST', 'GET'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username = form.username.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            login_user(user)
-            return redirect(url_for("main.home"))
-    return render_template('auth/login.html', form=form)
+    """
+    同步登录muxiOOOOOauth
+    """
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email = email).first()
+        if user is not None and \
+            user.verify_password(password):
+                login_user(user)
+                return redirect("http://123.56.41.13/auth/login/")
+    return render_template('auth/login.html')
 
 
-@login_required
-@auth.route('/logout/')
-def logout():
-    logout_user()
-    return redirect(url_for('main.home'))
+@auth.route('/register/', methods=['POST', 'GET'])
+def register():
+    """
+    同步注册
+    """
+    if request.method == 'POST':
+        email  = request.form.get('email')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User(
+            email = email,
+            username = username,
+            password = base64.b64encode(password),
+            role_id = 3
+        )
+        db.session.add(user)
+        db.session.commit()
+    return render_template('auth/register.html')
 
 
 @auth.route('/lostfound/', methods=['POST', 'GET'])
