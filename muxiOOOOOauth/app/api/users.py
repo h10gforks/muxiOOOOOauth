@@ -7,6 +7,7 @@
         muxioauth用户API
 """
 
+import json
 from . import api
 from .authentication import auth
 from app.decorators import grant_required
@@ -28,3 +29,13 @@ def create_user():
     return jsonify({
             "created": user.id
     }), 201
+
+
+@api.route('/user/', methods=["GET"])
+def get_email_user():
+    email = request.args.get('email')
+    if email:
+        user = User.query.filter_by(email=email).first()
+    else:
+        user = User.query.first()
+    return jsonify(user.to_json()), 200

@@ -22,7 +22,7 @@ def login():
         if user is not None and \
             user.verify_password(password):
                 login_user(user)
-                return redirect("http://123.56.41.13/auth/login/")
+                return redirect("http://xueer.muxixyz.com/privateship/?email=%s" % email)
     return render_template('auth/login.html')
 
 
@@ -38,7 +38,7 @@ def register():
         user = User(
             email = email,
             username = username,
-            password = base64.b64encode(password),
+            password = password,
             role_id = 3
         )
         db.session.add(user)
