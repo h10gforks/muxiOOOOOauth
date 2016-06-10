@@ -4,7 +4,6 @@
 	<meta charset="utf-8">
 	<title>木犀登陆页</title>
 	<link rel="stylesheet" type="text/css" href="/static/css/login.css">
-	<script src="http://localhost:8080/webpack-dev-server.js"></script>
 </head>
 <body>
 <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">	
@@ -442,11 +441,11 @@
 			<div class="log_option">
 				<p  class="tc"><span>登录</span></p>
 			</div>
-            <form action={{ url_for('auth.login') }} method="post">
+            <form action={{ url_for('auth.login') }} id="login_cont" method="post">
 				<input type="text" v-model="username" placeholder="邮箱" tabindex="1" name="email" />
-				<input type="text" v-model="password" placeholder="密码" tabindex="1" name="password" />
+				<input type="password" v-model="password" placeholder="密码" tabindex="1" name="password" />
 				<p class="forget">忘记密码？</p>
-				<input type="submit" class="cp" value="登 录" />
+				<input type="button" class="cp" value="登 录" />
                 <p class="bottom_line tc">没有账户？<a href={{ url_for('auth.register') }}>立即注册</a></p>
 			</form>
 			<svg class="folder">
