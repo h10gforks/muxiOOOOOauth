@@ -42,8 +42,8 @@ class Config:
     AUTH_MAIL_SUBJECT_PREFIX = '~[muxistudio]~'
 
     """celery configuration"""
-    CELERY_BROKER_URL = 'redis://localhost:6385/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6385/0'
+    CELERY_BROKER_URL = 'redis://redis1:6381/0'
+    CELERY_RESULT_BACKEND = 'redis://redis2:6382/0'
 
     @staticmethod
     def init_app(app):

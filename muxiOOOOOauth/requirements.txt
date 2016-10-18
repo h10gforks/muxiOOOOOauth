@@ -6,5 +6,7 @@ Flask-SQLAlchemy
 Flask-WTF
 Flask-DebugToolbar
 Flask-Mail
+flask-httpauth
 celery
 redis
+gunicorn

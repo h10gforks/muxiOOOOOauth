@@ -1,0 +1,36 @@
+#-------------------- muxiOOOOOauth ------------------------
+muxiauth:
+    build: .
+    env_file:
+        - muxiOOOOOauth.env
+    command: gunicorn --name muxiauth -b 0.0.0.0:5486 -w 2 wsgi:app
+    ports:
+        - "5486:5486"
+    volumes:
+        - .:/muxiauth
+    links:
+        - redis1
+
+#-------------------- celery --------------------------
+celery:
+    build: .
+    env_file:
+        - muxiOOOOOauth.env
+    command: celery worker -A app.mail.celery --loglevel=INFO
+    volumes:
+        - .:/muxiauth
+    links:
+        - redis1
+        - redis2
+
+#------------------- redis servers---------------------
+redis1:
+    image: redis
+    command: redis-server --port 6381
+    ports:
+        - "7381:6381"
+redis2:
+    image: redis
+    command: redis-server --port 6382 # celery result backend
+    ports:
+        - "7382:6382"

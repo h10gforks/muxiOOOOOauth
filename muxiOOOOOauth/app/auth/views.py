@@ -35,14 +35,16 @@ def register():
         email  = request.form.get('email')
         username = request.form.get('username')
         password = request.form.get('password')
-        user = User(
-            email = email,
-            username = username,
-            password = password,
-            role_id = 3
-        )
-        db.session.add(user)
-        db.session.commit()
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            user = User(
+                email = email,
+                username = username,
+                password = password,
+                role_id = 3
+            )
+            db.session.add(user)
+            db.session.commit()
     return render_template('auth/register.html')
 
 

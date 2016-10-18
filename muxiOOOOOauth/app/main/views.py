@@ -22,14 +22,16 @@ def register():
         username = form.username.data
         password = form.password.data
         email = form.email.data
-        user = User(
-            username = username,
-            password = password,
-            email = email
-        )
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("auth.login"))
+        user = User.query.filter_by(email=email)
+        if not user:
+            user = User(
+                username = username,
+                password = password,
+                email = email
+            )
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for("auth.login"))
     return render_template("main/register.html", form=form)
 
 
