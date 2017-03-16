@@ -1,7 +1,7 @@
 # coding: utf-8
 from . import mail, app, celery
 from flask import render_template
-from flask.ext.mail import Message
+from flask_mail import Message
 
 
 # send mail

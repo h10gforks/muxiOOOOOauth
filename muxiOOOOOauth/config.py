@@ -66,7 +66,8 @@ more connection URI format:
 class DevelopmentConfig(Config):
     """development configuration"""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.getenv("AUTH_SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = os.getenv("AUTH_SQLALCHEMY_DATABASE_URI") or \
+            "sqlite:///" + os.path.join(basedir, "data-test.sqlite")
 
 """
 testing configuration

@@ -34,10 +34,10 @@ project management
 
 import sys
 import os
-from flask.ext.script import Manager, Shell
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_script import Manager, Shell
+from flask_migrate import Migrate, MigrateCommand
 from app import db, app
-from app.models import User, Role
+from app.models import User, Role, Client
 
 # 编码设置
 reload(sys)
@@ -105,6 +105,13 @@ def adduser():
     db.session.add(u)
     db.session.commit()
     print "<user %s add in database>" % username
+
+
+@manager.command
+def insert_roles():
+    Role.insert_roles()
+    db.session.commit()
+    print "Roles hes been inserted!"
 
 
 if __name__ == '__main__':
