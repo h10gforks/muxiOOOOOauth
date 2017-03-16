@@ -1,19 +1,20 @@
-                      muxi OOOOO auth
-                          neo1218
+# muxi OOOOO auth
 
-                    1. About name ?
-                       ~ muxi OOOOO auth is not Oauth
+>  muxi OOOOO auth is not Oauth
 
-                    2. What this repo do ?
-                       ~ unified verification for muxi products
+#### What this repo do ?
 
-                    3. How to use ?
-                       ~ API DOC: Tower~Muxi_Doc
+unified verification for muxi products
 
-                    4. License ?
-                       ~ 木犀LICENSE...
+#### How to use ?
 
-                    5. Powered by
-                       ~ flask(mana + rest)
-                       ~ Semantic-UI
+API DOC: muxiOOOOOauthDoc
 
+#### License ?
+
+木犀LICENSE...
+
+#### Powered by
+
+  * flask(mana + rest)
+  * Semantic-UI
