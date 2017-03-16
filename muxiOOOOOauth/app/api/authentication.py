@@ -1,8 +1,9 @@
 # coding: utf-8
 
-from flask import g, jsonify
+from flask import g, jsonify, abort, request
 from flask_httpauth import HTTPBasicAuth
 from . import api
+from .. import db
 from ..models import User, AnonymousUser
 
 
@@ -44,8 +45,40 @@ def before_request():
 
 @api.route('/login/', methods=['POST', 'GET'])
 @auth.login_required
-def get_token():
+def login():
     return jsonify({
         'uid': g.current_user.id
     })
 
+
+@api.route('/register/', methods=['POST'])
+def register():
+    """
+    Register Function
+
+    args:
+        - username:
+        - email:
+        - password:
+    """
+    username = request.json.get('username')
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    if username is None or password is None:
+        abort(400)
+    if User.query.filter_by(username=username).first() is not None:
+        abort(400)
+    if User.query.filter_by(email=email).first() is not None:
+        abort(400)
+    user = User(
+            username = username,
+            email = email,
+            password = password
+            )
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({
+        'username': user.username,
+        'email': user.email
+        }), 201
