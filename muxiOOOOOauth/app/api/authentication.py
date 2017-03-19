@@ -65,12 +65,12 @@ def register():
     email = request.json.get('email')
     password = request.json.get('password')
 
-    if username is None or password is None:
-        abort(400)
+    if email is None or password is None:
+        jsonify({}), 400
     if User.query.filter_by(username=username).first() is not None:
-        abort(400)
+        jsonify({}), 400
     if User.query.filter_by(email=email).first() is not None:
-        abort(400)
+        jsonify({}), 400
     user = User(
             username = username,
             email = email,
