@@ -39,3 +39,25 @@ def get_email_user():
     else:
         user = User.query.first()
     return jsonify(user.to_json()), 200
+
+
+@api.route('/username_exists/', methods=["GET"])
+def username_exits():
+    """check username available"""
+    username = request.args.get("username")
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        return jsonify({}), 200
+    else:
+        return jsonify({}), 400
+
+
+@api.route('/email_exists/', methods=["GET"])
+def email_exits():
+    """check email available"""
+    email = request.args.get("email")
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        return jsonify({}), 200
+    else:
+        return jsonify({}), 400
