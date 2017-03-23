@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from wtforms.validators import Email
 from itsdangerous import URLSafeSerializer as Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as TJSSerializer
 # from rest.auth import AuthUser
 from flask import current_app
 import base64
@@ -98,6 +99,23 @@ class User(db.Model, UserMixin):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def generate_reset_token(self):
+        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60*2)
+        data = {
+            'reset': self.id
+        }
+        return s.dumps(data)
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60*2)
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        id = data.get('reset') # id int
+        return id
 
     def generate_confirm_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
