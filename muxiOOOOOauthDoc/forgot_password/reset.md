@@ -8,13 +8,14 @@
 
 ### URL Params
 
-    "token": "xxxxxxxxx" // Token
+    无
 
 ### POST Data(json)
 
     {
         "email": "xxxxxx@xxxx.com",   // string, 用户邮箱
         "new_password": "xxxxxxxxxxx" // string, 新密码
+        "captcha": "4444"             // string, 验证码
     }
 
 ### Return Data(json)

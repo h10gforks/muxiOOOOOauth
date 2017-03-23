@@ -21,27 +21,30 @@ def get_captcha():
         return jsonify({}), 404
     captcha = '%04d' % random.randrange(0, 9999)
     send_mail(email, '木犀通行证验证码', 'mail/reset', username=username, captcha=captcha)
-
-    return jsonify({
-        'token': user.generate_reset_token(),
-        'captcha': captcha
-        }), 200
+    user.reset_t = user.generate_reset_token(captcha)
+    return jsonify({}), 200
 
 
 @api.route('/forgot_password/reset/', methods=['POST'])
 def reset():
     """重置密码"""
-    token = request.args.get('token')
+    captcha = request.json.get('captcha')
     email = request.json.get('email')
     new_password = request.json.get('new_password')
     user = User.query.filter_by(email=email).first()
 
     if user is None:
         return jsonify({}), 404
-    if user.id != User.verify_reset_token(token):
+
+    try:
+        tid, tcaptcha = User.verify_reset_token(user.reset_t)
+    except TypeError:
+        return jsonify({}), 403
+    if tid != user.id or int(tcaptcha) != int(captcha):
         return jsonify({}), 403
 
     user.password = new_password
+    user.reset_t = None
     db.session.add(user)
     db.session.commit()
 

@@ -1,4 +1,4 @@
-# 获取验证码API
+# 发送验证码API
 
 | URL | Header |  Method |
 | ------------- |:-------------:| -----:|
@@ -19,11 +19,7 @@
 
 ### Return Data(json)
 
-    {
-      "token": "xxxxxxxx" // string, 重置密码时要提交的token
-      "captcha": "4444" // string, 四位验证码
-    }
-
+    {}
 
 ### Status Code:
 

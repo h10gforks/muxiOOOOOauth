@@ -11,6 +11,7 @@ from . import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin, current_user
 from wtforms.validators import Email
+from itsdangerous import SignatureExpired
 from itsdangerous import URLSafeSerializer as Serializer
 from itsdangerous import TimedJSONWebSignatureSerializer as TJSSerializer
 # from rest.auth import AuthUser
@@ -87,6 +88,7 @@ class User(db.Model, UserMixin):
     school = db.Column(db.String(164))
     phone = db.Column(db.String(20))
     qq = db.Column(db.String(20))
+    reset_t = db.Column(db.Text)
     clients = db.relationship('Client', backref="users", lazy='dynamic')
 
     @property
@@ -100,22 +102,24 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def generate_reset_token(self):
-        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60*2)
+    def generate_reset_token(self, captcha):
+        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60)
         data = {
-            'reset': self.id
+            'id': self.id,
+            'captcha': captcha
         }
         return s.dumps(data)
 
     @staticmethod
     def verify_reset_token(token):
-        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60*2)
+        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60)
         try:
             data = s.loads(token)
-        except:
+        except SignatureExpired:
             return False
-        id = data.get('reset') # id int
-        return id
+        id = data.get('id') # id int
+        captcha = data.get('captcha')
+        return id, captcha
 
     def generate_confirm_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
