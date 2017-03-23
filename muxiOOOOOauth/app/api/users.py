@@ -43,7 +43,7 @@ def get_email_user():
 
 @api.route('/username_exists/', methods=["GET"])
 def username_exits():
-    """check username available"""
+    """check username exists"""
     username = request.args.get("username")
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -54,7 +54,7 @@ def username_exits():
 
 @api.route('/email_exists/', methods=["GET"])
 def email_exits():
-    """check email available"""
+    """check email exists"""
     email = request.args.get("email")
     user = User.query.filter_by(email=email).first()
     if user is None:

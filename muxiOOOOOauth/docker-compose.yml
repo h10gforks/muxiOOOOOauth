@@ -10,6 +10,7 @@ muxiauth:
         - .:/muxiauth
     links:
         - redis1
+        - redis2
 
 #-------------------- celery --------------------------
 celery:

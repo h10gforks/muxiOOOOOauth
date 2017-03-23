@@ -33,13 +33,13 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     """mail configuration"""
-    MAIL_SERVER = 'smtp.163.com'
+    MAIL_SERVER = 'smtp.qq.com'
     MAIL_PORT = 25
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.getenv('AUTH_MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('AUTH_MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = 'muxistudio@163.com'
-    AUTH_MAIL_SUBJECT_PREFIX = '~[muxistudio]~'
+    MAIL_DEFAULT_SENDER = MAIL_USERNAME
+    AUTH_MAIL_SUBJECT_PREFIX = '[木犀团队]'
 
     """celery configuration"""
     CELERY_BROKER_URL = 'redis://redis1:6381/0'
@@ -96,4 +96,3 @@ config = {
     "production": ProductionConfig,
     "default": DevelopmentConfig
 }
-
