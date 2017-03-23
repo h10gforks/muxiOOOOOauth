@@ -44,6 +44,7 @@ def reset():
         return jsonify({}), 403
 
     user.password = new_password
+    user.reset_t = None
     db.session.add(user)
     db.session.commit()
 
