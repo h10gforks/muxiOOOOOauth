@@ -25,9 +25,32 @@ def get_captcha():
     return jsonify({}), 200
 
 
+@api.route('/forgot_password/check_captcha/', methods=['POST'])
+def check_captcha():
+    """
+    检查邮箱验证码
+    """
+    captcha = request.json.get('captcha')
+    email = request.json.get('email')
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        return jsonify({}), 404
+    try:
+        tid, tcaptcha = User.verify_reset_token(user.reset_t)
+    except TypeError:
+        return jsonify({}), 403
+    if tid != user.id or int(tcaptcha) != int(captcha):
+        return jsonify({}), 403
+
+    return jsonify({}), 200
+
+
 @api.route('/forgot_password/reset/', methods=['POST'])
 def reset():
-    """重置密码"""
+    """
+    重置密码
+    """
     captcha = request.json.get('captcha')
     email = request.json.get('email')
     new_password = request.json.get('new_password')
@@ -35,7 +58,6 @@ def reset():
 
     if user is None:
         return jsonify({}), 404
-
     try:
         tid, tcaptcha = User.verify_reset_token(user.reset_t)
     except TypeError:
