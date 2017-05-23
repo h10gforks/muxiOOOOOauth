@@ -103,7 +103,7 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
     def generate_reset_token(self, captcha):
-        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60)
+        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=10*60)
         data = {
             'id': self.id,
             'captcha': captcha
