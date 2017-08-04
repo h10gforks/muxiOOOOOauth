@@ -7,11 +7,12 @@
         muxioauth用户API
 """
 
-import json
+import base64
 from . import api
 from .authentication import auth
+from app import db
 from app.decorators import grant_required
-from app.models import User
+from app.models import User, Client
 from flask import jsonify, request
 
 
@@ -40,6 +41,29 @@ def get_email_user():
         user = User.query.first()
     return jsonify(user.to_json()), 200
 
+@api.route('/user/', methods=["PUT"])
+@auth.login_required
+def update_user():
+    token_header = request.headers.get('authorization')
+    if token_header:
+        json_data = request.get_json(force=True)
+        token_hash = token_header[6:]
+        token_8 = base64.b64decode(token_hash)
+        user_email = token_8.split(":")[0]
+
+        user = User.query.filter_by(email=user_email).first()
+
+        if json_data.has_key('qq'): user.qq = json_data['qq']
+        if json_data.has_key('school'): user.school = json_data['school']
+        if json_data.has_key('username'): user.username = json_data['username']
+        if json_data.has_key('sid'): user.sid = json_data['sid']
+        if json_data.has_key('phone'): user.phone = json_data['phone']
+
+        db.session.add(user)
+        db.session.commit()
+        return jsonify(user.to_json()), 200
+    return jsonify(), 401
+         
 
 @api.route('/username_exists/', methods=["GET"])
 def username_exits():

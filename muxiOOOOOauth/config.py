@@ -42,10 +42,12 @@ class Config:
     AUTH_MAIL_SUBJECT_PREFIX = '[木犀团队]'
     REDIS_BROKER_HOSTNAME = os.getenv('REDIS_BROKER_HOSTNAME')
     REDIS_BACKEND_HOSTNAME = os.getenv('REDIS_BACKEND_HOSTNAME')
+    BROKER_PORT = os.getenv('BROKER_PORT')
+    BACKEND_PORT = os.getenv('BACKEND_PORT')
 
     """celery configuration"""
-    CELERY_BROKER_URL = 'redis://' + REDIS_BROKER_HOSTNAME + ':6381/0'
-    CELERY_RESULT_BACKEND = 'redis://' + REDIS_BACKEND_HOSTNAME + ':6382/0'
+    CELERY_BROKER_URL = 'redis://' + (REDIS_BROKER_HOSTNAME or 'localhost') + ':' + (BROKER_PORT or '6381') + '/0'
+    CELERY_RESULT_BACKEND = 'redis://' + (REDIS_BACKEND_HOSTNAME or 'localhost') + ':' +  (BACKEND_PORT or '6382') + '/0'
 
     @staticmethod
     def init_app(app):
