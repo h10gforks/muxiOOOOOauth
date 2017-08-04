@@ -2,7 +2,7 @@
 
 | URL | Header |  Method |
 | ------------- |:-------------:| -----:|
-| /api/user/ | 无 | GET |
+| /api/user/?email=xxx@xx.com | 无 | GET |
 
 <hr/>
 

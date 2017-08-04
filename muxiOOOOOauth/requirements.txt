@@ -7,6 +7,7 @@ Flask-WTF
 Flask-DebugToolbar
 Flask-Mail
 flask-httpauth
+flask-script
 celery
 redis
 gunicorn
