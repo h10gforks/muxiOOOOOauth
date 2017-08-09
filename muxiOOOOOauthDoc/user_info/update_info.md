@@ -2,7 +2,7 @@
 
 | URL | Header |  Method |
 | ------------- |:-------------:| -----:|
-| /api/user/ | 登录的header | PUT |
+| /api/user/ | 登录的header("Basic Base64(email:passwd)") 或 token | PUT |
 
 <hr/>
 
@@ -27,7 +27,7 @@
 ### Status Code:
 
     200 OK
-    401 邮箱密码错误
+    401 验证错误
     403 没有访问权限
     502 服务器端错误
 

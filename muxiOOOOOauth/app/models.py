@@ -102,6 +102,23 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def generate_login_token(self):
+        s = TJSSerializer(current_app.config['SECRET_KEY']+"login_token", expires_in=60*60)
+        data = {
+            'id': self.id,
+        }
+        return s.dumps(data)
+
+    @staticmethod
+    def verify_login_token(token):
+        s = TJSSerializer(current_app.config['SECRET_KEY']+"login_token", expires_in=60*60)
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        uid = data.get('id') # id int
+        return uid
+
     def generate_reset_token(self, captcha):
         s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=10*60)
         data = {
@@ -112,10 +129,10 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def verify_reset_token(token):
-        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=60)
+        s = TJSSerializer(current_app.config['SECRET_KEY'], expires_in=10*60)
         try:
             data = s.loads(token)
-        except SignatureExpired:
+        except SignatureExpired, BadSignature:
             return False
         id = data.get('id') # id int
         captcha = data.get('captcha')

@@ -4,6 +4,7 @@ from flask import g, jsonify, abort, request
 from flask_httpauth import HTTPBasicAuth
 from . import api
 from .. import db
+from app.decorators import login_required
 from ..models import User, AnonymousUser
 
 
@@ -47,7 +48,8 @@ def before_request():
 @auth.login_required
 def login():
     return jsonify({
-        'uid': g.current_user.id
+        'uid': g.current_user.id,
+        'token': g.current_user.generate_login_token()
     })
 
 
