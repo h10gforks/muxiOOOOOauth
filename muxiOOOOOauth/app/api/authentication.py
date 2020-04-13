@@ -70,6 +70,7 @@ def login():
     })
 
 
+""" 
 @api.route('/login/', methods=['POST'])
 @auth.login_required
 def login():
@@ -77,6 +78,7 @@ def login():
         'uid': g.current_user.id,
         'token': g.current_user.generate_login_token()
     })
+"""
 
 
 @api.route('/register/', methods=['POST'])
