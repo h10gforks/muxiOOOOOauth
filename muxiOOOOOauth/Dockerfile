@@ -10,7 +10,7 @@ WORKDIR $DEPLOY_PATH
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
-  && apt-get install -y mysql-server --no-install-recommends \
+  && apt-get install -y mysql-server-5.6 --no-install-recommends \
   && apt-get clean \
   && pip install PyMySQL \
   && pip install MySQL-python \
