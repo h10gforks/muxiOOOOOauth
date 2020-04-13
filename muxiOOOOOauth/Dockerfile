@@ -9,7 +9,8 @@ WORKDIR $DEPLOY_PATH
 
 RUN apt-get install libssl-dev libmariadb-dev-compat
 
-RUN pip install mysql-connector-python
+RUN pip install mysql-connector-python \
+	&& pip install pymysql
 
 #ENV DEBIAN_FRONTEND noninteractive
 
