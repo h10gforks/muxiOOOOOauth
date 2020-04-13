@@ -24,6 +24,6 @@ RUN pip install mysql-connector-python
 Add requirements.txt requirements.txt
 RUN pip install --index-url http://pypi.doubanio.com/simple/ -r requirements.txt --trusted-host=pypi.doubanio.com
 # RUN pip install --index-url https://pypi.python.org/simple/ -r requirements.txt --trusted-host=pypi.python.org
-RUN pip install mysql-python
+#RUN pip install mysql-python
 
 Add . .
