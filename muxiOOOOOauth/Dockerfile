@@ -7,6 +7,8 @@ RUN mkdir -p $DEPLOY_PATH
 WORKDIR $DEPLOY_PATH
 
 
+RUN apt-get install libssl-dev
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
@@ -16,7 +18,6 @@ RUN apt-get update \
   && pip install MySQL-python \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN apt-get install libssl-dev
 
 Add requirements.txt requirements.txt
 RUN pip install --index-url http://pypi.doubanio.com/simple/ -r requirements.txt --trusted-host=pypi.doubanio.com
