@@ -44,7 +44,33 @@ def before_request():
     pass
 
 
-@api.route('/login/', methods=['POST', 'GET'])
+@api.route("/login/", methods=["GET"])
+def login():
+    import base64
+    header = request.headers.get("authorization")
+    if type(header) is not str or len(header) <= 6:
+        return jsonify({
+            "msg": "header is" + str(header)
+        }), 403
+
+    headerstr = header[6:]
+    passbyte = base64.b64decode(headerstr)
+    passstr = passbyte.decode("utf-8")
+    email = passstr.split(":")[0]
+
+    u = User.query.filter_by(email=email).first()
+    if not u:
+        return jsonify({
+            "msg": "user " + email + " not existed in muxiauth"
+        }), 403
+
+    return jsonify({
+        "uid": u.id,
+        "token": u.generate_login_token()
+    })
+
+
+@api.route('/login/', methods=['POST'])
 @auth.login_required
 def login():
     return jsonify({
