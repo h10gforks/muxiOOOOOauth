@@ -6,6 +6,9 @@ ENV DEPLOY_PATH /muxiauth
 RUN mkdir -p $DEPLOY_PATH
 WORKDIR $DEPLOY_PATH
 
+
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update \
   && apt-get install -y mysql-server --no-install-recommends \
   && apt-get clean \
