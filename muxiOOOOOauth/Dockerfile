@@ -7,11 +7,11 @@ RUN mkdir -p $DEPLOY_PATH
 WORKDIR $DEPLOY_PATH
 
 
-RUN apt-get install libssl-dev build-essential python-dev libmysqlclient-dev
+RUN apt-get install libssl-dev libmariadb-dev-compat
 
 RUN pip install mysql-connector-python
 
-ENV DEBIAN_FRONTEND noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
 
 #RUN apt-get update \
 #  && apt-get install -y mariadb-server-10.3 --no-install-recommends \
