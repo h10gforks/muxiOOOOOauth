@@ -48,9 +48,10 @@ def before_request():
 def login():
     import base64
     header = request.headers.get("authorization")
+    header = str(header)
     if type(header) is not str or len(header) <= 6:
         return jsonify({
-            "msg": "header is" + str(header)
+            "msg": "header is " + str(header)
         }), 403
 
     headerstr = header[6:]
