@@ -7,16 +7,18 @@ RUN mkdir -p $DEPLOY_PATH
 WORKDIR $DEPLOY_PATH
 
 
-RUN apt-get install libssl-dev
+RUN apt-get install libssl-dev build-essential python-dev libmysqlclient-dev
+
+RUN pip install mysql-connector-python
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update \
-  && apt-get install -y mariadb-server-10.3 --no-install-recommends \
-  && apt-get clean \
-  && pip install PyMySQL \
-  && pip install MySQL-python \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#RUN apt-get update \
+#  && apt-get install -y mariadb-server-10.3 --no-install-recommends \
+#  && apt-get clean \
+#  && pip install PyMySQL \
+#  && pip install MySQL-python \
+#  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 Add requirements.txt requirements.txt
